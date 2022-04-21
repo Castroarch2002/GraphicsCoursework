@@ -56,7 +56,9 @@ class DrawnShape {
     if ( shapeType.equals("rect")) rect(x1, y1, w, h);
     if ( shapeType.equals("ellipse")) ellipse(x1+ w/2, y1 + h/2, w, h);
     if ( shapeType.equals("line")) line(x1, y1, x2, y2);
-   
+    if (outputImage != null){
+      if (shapeType.equals("image")) image(outputImage, x1, y1, w,h);
+    }
 
   }
 

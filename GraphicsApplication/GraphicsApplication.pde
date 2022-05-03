@@ -28,7 +28,7 @@ void setup() {
   myUI.addRadioButton("image", 5, 140, "group1");
 
   // Undo Image Changes
-  myUI.addRadioButton("undo", 5, 170, "group1");
+  myUI.addSimpleButton("undo", 5, 170);
 
   rectButton.selected = true;
   toolMode = rectButton.UILabel;
@@ -121,6 +121,13 @@ void handleUIEvent(UIEventData uied) {
     outputImage = applyPointProcessing(lut, loadedImage);
   }
 
+  // Changing back to original
+  if ( uied.eventIsFromWidget("undo")) {
+    outputImage = loadedImage.copy();
+  }
+
+
+
   // only canvas events below here! First get the mouse point
   if (uied.eventIsFromWidget("canvas")==false) return;
   PVector p =  new PVector(uied.mousex, uied.mousey);
@@ -140,13 +147,7 @@ void handleUIEvent(UIEventData uied) {
   if ( toolMode.equals("select") ) {    
     drawingList.trySelect(uied.mouseEventType, p);
   }
-
-  // Changing back to original
-  if ( uied.eventIsFromWidget("undo")) {
-    outputImage = loadedImage.copy();
-  }
 }
-
 // Making LUTs
 
 int[] makeLUT(String functionName, float param1, float param2) {

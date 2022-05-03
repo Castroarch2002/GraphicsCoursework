@@ -2,10 +2,9 @@
 // Made by Hugo Castro N0936926
 
 PImage loadedImage;
-PImage sourceImage;
 PImage outputImage;
 
-int imageWidth, imageHeight;
+//int imageWidth, imageHeight;
 
 SimpleUI myUI;
 DrawingList drawingList;
@@ -14,14 +13,6 @@ String toolMode = "";
 
 void setup() {
   size(900, 600);
-  //sourceImage = loadedImage;
-  sourceImage = loadImage("screentest.jpg");
-  imageWidth = sourceImage.width;
-  imageHeight = sourceImage.height;
-  surface.setResizable(true);
-  surface.setSize(imageWidth*2, imageHeight);
-
-
 
   myUI = new SimpleUI();
   drawingList = new DrawingList();
@@ -37,24 +28,39 @@ void setup() {
 
   // Draw Line (Live Shape)
   myUI.addRadioButton("line", 5, 110, "group1");
+  
+  // Draw Image (Click and Drag)
+  myUI.addRadioButton("image", 5, 140, "group1");
+  
 
   rectButton.selected = true;
   toolMode = rectButton.UILabel;
 
   // add a new tool .. the select tool
-  myUI.addRadioButton("select", 5, 140, "group1");
+  myUI.addRadioButton("select", 5, 170, "group1");
 
   // Add Canvas
   myUI.addCanvas(110, 10, 780, 580);
 
   // Simple buttons
-  myUI.addSimpleButton("load file", 5, 170);
-  myUI.addSimpleButton("save file", 5, 200);
+  myUI.addSimpleButton("load file", 5, 200);
+  myUI.addSimpleButton("save file", 5, 230);
 
   // Image Processing Menu 
   String[] items = { "brighten", "darken", "contrast", "negative" };
-  myUI.addMenu("Effect", 5, 230, items);
+  myUI.addMenu("Effect", 5, 260, items);
+ 
+  
 }
+
+void draw() {
+  background(255);
+
+  drawingList.drawMe();
+  
+  // Must Update the UI in draw 
+  myUI.update();
+  }
 
 void handleUIEvent(UIEventData uied) {
 
@@ -82,6 +88,7 @@ void handleUIEvent(UIEventData uied) {
   //this catches the file load information when the file load dialogue's "open" button is hit
   if (uied.eventIsFromWidget("fileLoadDialog")) {
     loadedImage = loadImage(uied.fileSelection);
+    outputImage =  loadedImage.copy();
   }
 
 
@@ -102,23 +109,23 @@ void handleUIEvent(UIEventData uied) {
 
   if ( uied.eventIsFromWidget("brighten")) {
     int[] lut =  makeLUT("brighten", 1.5, 0.0);
-    outputImage = applyPointProcessing(lut, sourceImage);
+    outputImage = applyPointProcessing(lut, loadedImage);
   }
 
   if ( uied.eventIsFromWidget("darken")) {
     int[] lut =  makeLUT("brighten", 0.5, 0.0);
-    outputImage = applyPointProcessing(lut, sourceImage);
+    outputImage = applyPointProcessing(lut, loadedImage);
   }
 
 
   if ( uied.eventIsFromWidget("contrast")) {
     int[] lut =  makeLUT("sigmoid", 0.0, 0.0);
-    outputImage = applyPointProcessing(lut, sourceImage);
+    outputImage = applyPointProcessing(lut, loadedImage);
   }
 
   if ( uied.eventIsFromWidget("negative")) {
     int[] lut =  makeLUT("negative", 0.0, 0.0);
-    outputImage = applyPointProcessing(lut, sourceImage);
+    outputImage = applyPointProcessing(lut, loadedImage);
   }
 
   // only canvas events below here! First get the mouse point
@@ -129,8 +136,9 @@ void handleUIEvent(UIEventData uied) {
   // so that drawing events are sent to the display list class only if the current tool 
   // is a shape drawing tool
   if ( toolMode.equals("rect") || 
-    toolMode.equals("ellipse") ||
-    toolMode.equals("line")) {    
+    toolMode.equals("ellipse")||
+    toolMode.equals("line")||
+    toolMode.equals("image")){
     drawingList.createShape(toolMode, uied.mouseEventType, p);
     return;
   }
@@ -141,26 +149,7 @@ void handleUIEvent(UIEventData uied) {
   }
 }
 
-void draw() {
-  background(255);
-
-  drawingList.drawMe();
-
-  // and draw your content afterwards 
-  //if ( loadedImage != null ) {
-
-  //image(loadedImage, 230, 80);
-  //}
-
-  image(sourceImage, 0, 0);
-
-  if (outputImage != null) {
-    image(outputImage, sourceImage.width, 0);
-  }
-
-  // Must Update the UI in draw 
-  myUI.update();
-}
+// Making LUTs
 
 int[] makeLUT(String functionName, float param1, float param2) {
   int[] lut = new int[256];
@@ -228,11 +217,6 @@ float getSeconds() {
   float t = millis()/1000.0;
   return t;
 }
-
-
-
-
-
 
 // makeFunctionLUT
 // this function returns a LUT from the range of functions listed

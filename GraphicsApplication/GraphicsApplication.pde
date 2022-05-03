@@ -46,6 +46,9 @@ void setup() {
   // Image Processing Menu 
   String[] items = { "brighten", "darken", "contrast", "negative" };
   myUI.addMenu("Effect", 5, 290, items);
+  
+  // Grayscale Button 
+  myUI.addSimpleButton("grayscale", 5, 320);
 }
 
 void draw() {
@@ -124,6 +127,23 @@ void handleUIEvent(UIEventData uied) {
   // Changing back to original
   if ( uied.eventIsFromWidget("undo")) {
     outputImage = loadedImage.copy();
+  }
+
+  // Simple Image Processing 
+
+  if ( uied.eventIsFromWidget("grayscale")) {
+    for (int y = 0; y < loadedImage.height; y++) {
+
+      for (int x = 0; x < loadedImage.width; x++) {
+        color thisPix = loadedImage.get(x, y);
+        int r = (int) red(thisPix);
+        int g = (int) green(thisPix);
+        int b = (int) blue(thisPix);
+        int brightness = (r+g+b)/3;
+        color greyCol = color(brightness, brightness, brightness);
+        outputImage.set(x, y, greyCol);
+      }
+    }
   }
 
 

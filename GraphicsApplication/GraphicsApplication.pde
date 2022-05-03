@@ -198,8 +198,6 @@ void handleUIEvent(UIEventData uied) {
   
   // Convolution Filters
   if( uied.eventIsFromWidget("blur")) { 
-  outputImage = createImage(loadedImage.width,loadedImage.height,RGB);
-  loadedImage.loadPixels();
   int matrixSize = 7;
   for(int y = 0; y < loadedImage.width; y++){
   for(int x = 0; x < loadedImage.height; x++){

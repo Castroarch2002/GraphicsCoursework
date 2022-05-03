@@ -1,6 +1,32 @@
 // This is my Graphics Application
 // Made by Hugo Castro N0936926
 
+// Convolution Filters
+// It's possible to convolve the image with many different 
+// matrices to produce different effects. 
+
+
+float[][] edge_matrix = { { 0,  -2,  0 },
+                          { -2,  8, -2 },
+                          { 0,  -2,  0 } }; 
+                     
+float[][] blur_matrix = {  {0.1,  0.1,  0.1 },
+                           {0.1,  0.2,  0.1 },
+                           {0.1,  0.1,  0.1 } };                      
+
+float[][] sharpen_matrix = {  { 0, -1, 0 },
+                              {-1, 5, -1 },
+                              { 0, -1, 0 } };  
+                         
+float[][] gaussianblur_matrix = { { 0.000,  0.000,  0.001, 0.001, 0.001, 0.000, 0.000},
+                                  { 0.000,  0.002,  0.012, 0.020, 0.012, 0.002, 0.000},
+                                  { 0.001,  0.012,  0.068, 0.109, 0.068, 0.012, 0.001},
+                                  { 0.001,  0.020,  0.109, 0.172, 0.109, 0.020, 0.001},
+                                  { 0.001,  0.012,  0.068, 0.109, 0.068, 0.012, 0.001},
+                                  { 0.000,  0.002,  0.012, 0.020, 0.012, 0.002, 0.000},
+                                  { 0.000,  0.000,  0.001, 0.001, 0.001, 0.000, 0.000}
+                                  };
+
 PImage loadedImage;
 PImage outputImage;
 
@@ -52,6 +78,9 @@ void setup() {
   
   // Switch Colour Buttom 
   myUI.addSimpleButton("switch colour", 5, 350);
+  
+  // Blur Button 
+  myUI.addSimpleButton("blur", 5, 380);
 }
 
 void draw() {
@@ -166,7 +195,21 @@ void handleUIEvent(UIEventData uied) {
       }
     }
   }
-
+  
+  // Convolution Filters
+  if( uied.eventIsFromWidget("blur")) { 
+  outputImage = createImage(loadedImage.width,loadedImage.height,RGB);
+  loadedImage.loadPixels();
+  int matrixSize = 7;
+  for(int y = 0; y < loadedImage.width; y++){
+  for(int x = 0; x < loadedImage.height; x++){
+    
+    color c = convolution(x, y, gaussianblur_matrix, matrixSize, loadedImage);
+    
+    outputImage.set(x,y,c);
+    }
+  }
+ }
 
   // only canvas events below here! First get the mouse point
   if (uied.eventIsFromWidget("canvas")==false) return;
@@ -188,6 +231,7 @@ void handleUIEvent(UIEventData uied) {
     drawingList.trySelect(uied.mouseEventType, p);
    }
 }
+
 // Making LUTs
 
 int[] makeLUT(String functionName, float param1, float param2) {
@@ -255,6 +299,43 @@ PImage applyPointProcessing(int[] LUT, PImage inputImage) {
 float getSeconds() {
   float t = millis()/1000.0;
   return t;
+}
+
+// Convolution Filters 
+color convolution(int Xcen, int Ycen, float[][] matrix, int matrixsize, PImage loadedImage)
+{
+  float rtotal = 0.0;
+  float gtotal = 0.0;
+  float btotal = 0.0;
+  int offset = matrixsize / 2;
+  // this is where we sample every pixel around the centre pixel
+  // according to the sample-matrix size
+  for (int i = 0; i < matrixsize; i++){
+    for (int j= 0; j < matrixsize; j++){
+      
+      //
+      // work out which pixel are we testing
+      int xloc = Xcen+i-offset;
+      int yloc = Ycen+j-offset;
+      
+      // Make sure we haven't walked off our image
+      if( xloc < 0 || xloc >= loadedImage.width) continue;
+      if( yloc < 0 || yloc >= loadedImage.height) continue;
+      
+      
+      // Calculate the convolution
+      color col = loadedImage.get(xloc,yloc);
+      rtotal += (red(col) * matrix[i][j]);
+      gtotal += (green(col) * matrix[i][j]);
+      btotal += (blue(col) * matrix[i][j]);
+    }
+  }
+  // Make sure RGB is within range
+  rtotal = constrain(rtotal, 0, 255);
+  gtotal = constrain(gtotal, 0, 255);
+  btotal = constrain(btotal, 0, 255);
+  // Return the resulting color
+  return color(rtotal, gtotal, btotal);
 }
 
 // makeFunctionLUT

@@ -4,8 +4,6 @@
 PImage loadedImage;
 PImage outputImage;
 
-//int imageWidth, imageHeight;
-
 SimpleUI myUI;
 DrawingList drawingList;
 
@@ -17,9 +15,6 @@ void setup() {
   myUI = new SimpleUI();
   drawingList = new DrawingList();
 
-  // Loading Images
-  //sourceImage = loadedImage;
-
   // Draw Rectangle (Live Shape)
   RadioButton  rectButton = myUI.addRadioButton("rect", 5, 50, "group1");
 
@@ -28,39 +23,39 @@ void setup() {
 
   // Draw Line (Live Shape)
   myUI.addRadioButton("line", 5, 110, "group1");
-  
+
   // Draw Image (Click and Drag)
   myUI.addRadioButton("image", 5, 140, "group1");
-  
+
+  // Undo Image Changes
+  myUI.addRadioButton("undo", 5, 170, "group1");
 
   rectButton.selected = true;
   toolMode = rectButton.UILabel;
 
   // add a new tool .. the select tool
-  myUI.addRadioButton("select", 5, 170, "group1");
+  myUI.addRadioButton("select", 5, 200, "group1");
 
   // Add Canvas
   myUI.addCanvas(110, 10, 780, 580);
 
   // Simple buttons
-  myUI.addSimpleButton("load file", 5, 200);
-  myUI.addSimpleButton("save file", 5, 230);
+  myUI.addSimpleButton("load file", 5, 230);
+  myUI.addSimpleButton("save file", 5, 260);
 
   // Image Processing Menu 
   String[] items = { "brighten", "darken", "contrast", "negative" };
-  myUI.addMenu("Effect", 5, 260, items);
- 
-  
+  myUI.addMenu("Effect", 5, 290, items);
 }
 
 void draw() {
   background(255);
 
   drawingList.drawMe();
-  
+
   // Must Update the UI in draw 
   myUI.update();
-  }
+}
 
 void handleUIEvent(UIEventData uied) {
 
@@ -91,8 +86,6 @@ void handleUIEvent(UIEventData uied) {
     outputImage =  loadedImage.copy();
   }
 
-
-
   //////////////////////////////////////////////////
   // saving a file via the file dialog 
   //
@@ -104,7 +97,7 @@ void handleUIEvent(UIEventData uied) {
 
   //this catches the file save information when the file save dialogue's "save" button is hit
   if (uied.eventIsFromWidget("fileSaveDialog")) {
-    loadedImage.save(uied.fileSelection);
+    outputImage.save(uied.fileSelection);
   }
 
   if ( uied.eventIsFromWidget("brighten")) {
@@ -138,7 +131,7 @@ void handleUIEvent(UIEventData uied) {
   if ( toolMode.equals("rect") || 
     toolMode.equals("ellipse")||
     toolMode.equals("line")||
-    toolMode.equals("image")){
+    toolMode.equals("image")) {
     drawingList.createShape(toolMode, uied.mouseEventType, p);
     return;
   }
@@ -146,6 +139,11 @@ void handleUIEvent(UIEventData uied) {
   // if the current tool is "select" then do this
   if ( toolMode.equals("select") ) {    
     drawingList.trySelect(uied.mouseEventType, p);
+  }
+
+  // Changing back to original
+  if ( uied.eventIsFromWidget("undo")) {
+    outputImage = loadedImage.copy();
   }
 }
 

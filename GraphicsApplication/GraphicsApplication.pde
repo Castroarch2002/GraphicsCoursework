@@ -49,6 +49,9 @@ void setup() {
   
   // Grayscale Button 
   myUI.addSimpleButton("grayscale", 5, 320);
+  
+  // Switch Colour Buttom 
+  myUI.addSimpleButton("switch colour", 5, 350);
 }
 
 void draw() {
@@ -130,10 +133,10 @@ void handleUIEvent(UIEventData uied) {
   }
 
   // Simple Image Processing 
-
+  
+  // Grayscale Image
   if ( uied.eventIsFromWidget("grayscale")) {
     for (int y = 0; y < loadedImage.height; y++) {
-
       for (int x = 0; x < loadedImage.width; x++) {
         color thisPix = loadedImage.get(x, y);
         int r = (int) red(thisPix);
@@ -145,7 +148,24 @@ void handleUIEvent(UIEventData uied) {
       }
     }
   }
+  
+  // Switch Colours
+  if ( uied.eventIsFromWidget("switch colour")) {
+     for (int y = 0; y < loadedImage.height; y++) {
+    for (int x = 0; x < loadedImage.width; x++) {
 
+      color thisPix = loadedImage.get(x, y);
+      
+      float r = red(thisPix);
+      float g = green(thisPix);
+      float b = blue(thisPix);
+      
+      // swap takes place here (should be in order r,g,b)
+      color swappedColour = color(g, r, b);
+      outputImage.set(x, y, swappedColour);
+      }
+    }
+  }
 
 
   // only canvas events below here! First get the mouse point
@@ -166,7 +186,7 @@ void handleUIEvent(UIEventData uied) {
   // if the current tool is "select" then do this
   if ( toolMode.equals("select") ) {    
     drawingList.trySelect(uied.mouseEventType, p);
-  }
+   }
 }
 // Making LUTs
 

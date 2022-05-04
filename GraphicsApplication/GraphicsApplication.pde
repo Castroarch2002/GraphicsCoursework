@@ -27,6 +27,8 @@ float[][] gaussianblur_matrix = { { 0.000,  0.000,  0.001, 0.001, 0.001, 0.000, 
                                   { 0.000,  0.000,  0.001, 0.001, 0.001, 0.000, 0.000}
                                   };
 
+// PImage Functions
+
 PImage loadedImage;
 PImage outputImage;
 
@@ -71,7 +73,7 @@ void setup() {
 
   // Image Processing Menu 
   String[] items = { "brighten", "darken", "contrast", "negative" };
-  myUI.addMenu("Effect", 5, 290, items);
+  myUI.addMenu("Effect", 5, 380, items);
   
   // Grayscale Button 
   myUI.addSimpleButton("grayscale", 5, 320);
@@ -80,7 +82,7 @@ void setup() {
   myUI.addSimpleButton("switch colour", 5, 350);
   
   // Blur Button 
-  myUI.addSimpleButton("blur", 5, 380);
+  myUI.addSimpleButton("blur", 5, 290);
 }
 
 void draw() {

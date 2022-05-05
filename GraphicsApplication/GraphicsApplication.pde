@@ -220,7 +220,43 @@ void handleUIEvent(UIEventData uied) {
     }
   }
  }
-
+ 
+   // Blur 
+  if( uied.eventIsFromWidget("blur")) { 
+  int matrixSize = 7;
+  for(int y = 0; y < loadedImage.width; y++){
+  for(int x = 0; x < loadedImage.height; x++){
+    
+    color c = convolution(x, y, blur_matrix, matrixSize, loadedImage);
+    
+    outputImage.set(x,y,c);
+    }
+  }
+ }
+   // Edge 
+  if( uied.eventIsFromWidget("edge")) { 
+  int matrixSize = 7;
+  for(int y = 0; y < loadedImage.width; y++){
+  for(int x = 0; x < loadedImage.height; x++){
+    
+    color c = convolution(x, y, edge_matrix, matrixSize, loadedImage);
+    
+    outputImage.set(x,y,c);
+    }
+  }
+ }
+   // Sharpen
+    if( uied.eventIsFromWidget("sharpen")) { 
+  int matrixSize = 7;
+  for(int y = 0; y < loadedImage.width; y++){
+  for(int x = 0; x < loadedImage.height; x++){
+    
+    color c = convolution(x, y, sharpen_matrix, matrixSize, loadedImage);
+    
+    outputImage.set(x,y,c);
+    }
+  }
+ }
   // only canvas events below here! First get the mouse point
   if (uied.eventIsFromWidget("canvas")==false) return;
   PVector p =  new PVector(uied.mousex, uied.mousey);

@@ -73,7 +73,7 @@ void setup() {
 
   // Image Processing Menu 
   String[] items = { "brighten", "darken", "contrast", "negative" };
-  myUI.addMenu("Effect", 5, 380, items);
+  myUI.addMenu("Effect", 5, 470, items);
   
   // Grayscale Button 
   myUI.addSimpleButton("grayscale", 5, 320);
@@ -83,6 +83,15 @@ void setup() {
   
   // Gaussian Blur Button 
   myUI.addSimpleButton("gaussian blur", 5, 290);
+  
+  // Blur Button 
+  myUI.addSimpleButton("blur", 5, 380);
+  
+  // Edge Button
+  myUI.addSimpleButton("edge", 5, 410);
+  
+  // Sharpen Button
+  myUI.addSimpleButton("sharpen", 5, 440);
 }
 
 void draw() {

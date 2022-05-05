@@ -81,8 +81,8 @@ void setup() {
   // Switch Colour Buttom 
   myUI.addSimpleButton("switch colour", 5, 350);
   
-  // Blur Button 
-  myUI.addSimpleButton("blur", 5, 290);
+  // Gaussian Blur Button 
+  myUI.addSimpleButton("gaussian blur", 5, 290);
 }
 
 void draw() {
@@ -199,7 +199,8 @@ void handleUIEvent(UIEventData uied) {
   }
   
   // Convolution Filters
-  if( uied.eventIsFromWidget("blur")) { 
+  // Gaussian  Blur
+  if( uied.eventIsFromWidget("gaussian blur")) { 
   int matrixSize = 7;
   for(int y = 0; y < loadedImage.width; y++){
   for(int x = 0; x < loadedImage.height; x++){
